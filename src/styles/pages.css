@@ -1,0 +1,104 @@
+.vt-wrapper {
+  background: #fff7ed;
+  padding: 40px 0 80px;
+}
+
+.vt-subtitle {
+  text-align: center;
+  max-width: 620px;
+  margin: 0 auto 40px;
+  font-size: 15px;
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+.vt-container {
+  max-width: 1150px;
+  margin: auto;
+}
+
+.vt-grid {
+  display: flex;
+  gap: 28px;
+  justify-content: center;
+}
+
+.vt-card {
+  width: 350px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+}
+
+.vt-card-header {
+  background: linear-gradient(to bottom, #111827, #1f2937);
+  color: white;
+  padding: 18px 18px 14px;
+}
+
+.vt-card-header h3 {
+  color: #f59e0b;
+  font-size: 17px;
+  margin-bottom: 6px;
+}
+
+.vt-card-header p {
+  font-size: 13px;
+  color: #e5e7eb;
+  line-height: 1.5;
+}
+
+.vt-card img {
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+}
+
+.vt-card-body {
+  padding: 16px 18px 18px;
+}
+
+.vt-place-title {
+  font-weight: 600;
+  font-size: 15px;
+  color: #111827;
+}
+
+.vt-place-desc {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 14px;
+}
+
+.vt-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.vt-btn {
+  background: #f59e0b;
+  border: none;
+  padding: 6px 16px;
+  color: white;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.vt-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.vt-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #d1d5db;
+}
+
+.vt-dot.active {
+  background: #f59e0b;
+}

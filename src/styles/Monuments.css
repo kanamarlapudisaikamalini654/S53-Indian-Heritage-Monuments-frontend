@@ -1,0 +1,344 @@
+.monuments-page {
+  padding-top: 72px;
+}
+
+.monuments-hero {
+  padding: 60px 20px 40px;
+  text-align: center;
+  background: linear-gradient(135deg, rgba(255, 153, 51, 0.06), rgba(212, 175, 55, 0.06));
+}
+
+.monuments-hero h1 {
+  font-size: 2.5rem;
+}
+
+/* Filters */
+.monuments-filters {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px 32px;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 250px;
+  padding: 12px 20px;
+  border: 2px solid var(--light-gray);
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  transition: border-color var(--transition);
+  background: var(--white);
+}
+
+.search-input:focus {
+  border-color: var(--saffron);
+}
+
+.filter-select {
+  padding: 12px 16px;
+  border: 2px solid var(--light-gray);
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  background: var(--white);
+  cursor: pointer;
+  transition: border-color var(--transition);
+  min-width: 160px;
+}
+
+.filter-select:focus {
+  border-color: var(--saffron);
+}
+
+/* Monument Grid */
+.monuments-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px 80px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+
+.monument-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 4px 16px var(--shadow);
+  transition: all 0.4s ease;
+  animation: fadeInUp 0.6s ease forwards;
+  opacity: 0;
+  position: relative;
+}
+
+.monument-card:nth-child(1) { animation-delay: 0.05s; }
+.monument-card:nth-child(2) { animation-delay: 0.1s; }
+.monument-card:nth-child(3) { animation-delay: 0.15s; }
+.monument-card:nth-child(4) { animation-delay: 0.2s; }
+.monument-card:nth-child(5) { animation-delay: 0.25s; }
+.monument-card:nth-child(6) { animation-delay: 0.3s; }
+
+.monument-card:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 16px 48px var(--shadow-heavy);
+}
+
+.monument-card-image {
+  height: 220px;
+  overflow: hidden;
+  position: relative;
+}
+
+.monument-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.monument-card:hover .monument-card-image img {
+  transform: scale(1.1);
+}
+
+.monument-card-overlay {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+.fav-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  transition: all var(--transition);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.fav-btn:hover {
+  transform: scale(1.15);
+}
+
+.fav-btn.active {
+  background: var(--deep-red);
+  color: var(--white);
+}
+
+.monument-card-body {
+  padding: 20px;
+}
+
+.monument-card-body h3 {
+  font-size: 1.2rem;
+  margin-bottom: 6px;
+}
+
+.monument-card-body .monument-location {
+  font-size: 0.8rem;
+  color: var(--gray);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.monument-card-body p {
+  font-size: 0.85rem;
+  color: var(--gray);
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+
+.monument-card-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.monument-card-tags span {
+  font-size: 0.7rem;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+.monument-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.monument-card-footer .btn {
+  padding: 8px 16px;
+  font-size: 0.8rem;
+}
+
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--gray);
+}
+
+.no-results h3 {
+  font-size: 1.3rem;
+  margin-bottom: 8px;
+  color: var(--dark-gray);
+}
+
+/* ===== Monument Details ===== */
+.monument-details {
+  padding-top: 72px;
+}
+
+.monument-detail-hero {
+  height: 50vh;
+  min-height: 350px;
+  position: relative;
+  overflow: hidden;
+}
+
+.monument-detail-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.monument-detail-hero-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 40px;
+  background: linear-gradient(transparent, rgba(26, 26, 46, 0.9));
+}
+
+.monument-detail-hero-overlay h1 {
+  font-size: 3rem;
+  color: var(--white);
+  margin-bottom: 8px;
+}
+
+.monument-detail-hero-overlay p {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+}
+
+.monument-detail-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 60px 20px;
+}
+
+.detail-section {
+  margin-bottom: 48px;
+}
+
+.detail-section h2 {
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+}
+
+.detail-section p {
+  color: var(--gray);
+  line-height: 1.8;
+  font-size: 1rem;
+}
+
+.facts-list {
+  margin-top: 16px;
+}
+
+.facts-list li {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--light-gray);
+  font-size: 0.95rem;
+  color: var(--dark-gray);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.facts-list li::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--saffron);
+  flex-shrink: 0;
+}
+
+.detail-tags {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.detail-tags span {
+  padding: 6px 16px;
+  border-radius: 24px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* Gallery */
+.detail-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.detail-gallery img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
+  cursor: pointer;
+}
+
+.detail-gallery img:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 24px var(--shadow-heavy);
+}
+
+.detail-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+@media (max-width: 768px) {
+  .monuments-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .monuments-filters {
+    flex-direction: column;
+  }
+
+  .search-input,
+  .filter-select {
+    width: 100%;
+  }
+
+  .monument-detail-hero-overlay h1 {
+    font-size: 2rem;
+  }
+
+  .detail-gallery {
+    grid-template-columns: 1fr;
+  }
+}
