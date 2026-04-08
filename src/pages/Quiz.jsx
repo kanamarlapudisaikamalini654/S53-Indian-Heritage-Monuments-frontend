@@ -1,61 +1,89 @@
-import React, { useState } from 'react';
-import { quizQuestions } from '../data/mockData';
-import '../styles/Quiz.css';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import '../styles/Quiz.css'; 
 
-const Quiz = () => {
-  const [currentQuestion, setCurrentQuestion] = useState(0);
+export default function Quiz() {
+  const navigate = useNavigate();
+  const [answers, setAnswers] = useState({});
+  const [timeLeft, setTimeLeft] = useState(60); 
+  const [isFinished, setIsFinished] = useState(false);
   const [score, setScore] = useState(0);
-  const [showScore, setShowScore] = useState(false);
 
-  const handleAnswerClick = (selectedOptionIndex) => {
-    if (selectedOptionIndex === quizQuestions[currentQuestion].answer) {
-      setScore(score + 1);
+  const questions = [
+    { id: 1, question: "Which Mughal Emperor built the Taj Mahal?", options: ["Akbar", "Shah Jahan", "Humayun", "Aurangzeb"], answer: "Shah Jahan" },
+    { id: 2, question: "Hawa Mahal is located in which city?", options: ["Jaipur", "Udaipur", "Jodhpur", "Ajmer"], answer: "Jaipur" },
+    { id: 3, question: "The Konark Sun Temple is in which state?", options: ["Bihar", "Odisha", "Gujarat", "MP"], answer: "Odisha" },
+    { id: 4, question: "Which monument is also known as the 'Victory Tower'?", options: ["Qutub Minar", "Vijay Stambha", "Charminar", "India Gate"], answer: "Vijay Stambha" },
+    { id: 5, question: "In which year was the Red Fort designated a UNESCO World Heritage Site?", options: ["2001", "2005", "2007", "2010"], answer: "2007" }
+  ];
+
+  useEffect(() => {
+    if (timeLeft > 0 && !isFinished) {
+      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+      return () => clearTimeout(timer);
+    } else if (timeLeft === 0 && !isFinished) {
+      handleSubmit(); 
     }
+  }, [timeLeft, isFinished]);
 
-    const nextQuestion = currentQuestion + 1;
-    if (nextQuestion < quizQuestions.length) {
-      setCurrentQuestion(nextQuestion);
-    } else {
-      setShowScore(true);
+  const handleSubmit = async () => {
+    let finalScore = 0;
+    questions.forEach(q => {
+      if (answers[q.id] === q.answer) finalScore += 1;
+    });
+    setScore(finalScore);
+
+    try {
+      await axios.post("http://localhost:8081/api/quiz/submit", {
+        studentName: localStorage.getItem("userName") || "Kamalini",
+        score: finalScore,
+        totalQuestions: 5
+      });
+      setIsFinished(true);
+    } catch (error) {
+      setIsFinished(true); 
     }
   };
 
-  const resetQuiz = () => {
-    setCurrentQuestion(0);
-    setScore(0);
-    setShowScore(false);
-  };
+  if (isFinished) {
+    return (
+      <div className="quiz-result-screen">
+        <div className="result-card-bold">
+          <h1>Quiz Completed!</h1>
+          <div className="score-circle-bold">{score} / 5</div>
+          <p>Great Job, {localStorage.getItem("userName") || "Kamalini"}!</p>
+          <button onClick={() => navigate('/dashboard')} className="btn-dash">Back to Dashboard</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="quiz-container">
-      {showScore ? (
-        <div className="score-section">
-          <h2>You scored {score} out of {quizQuestions.length}</h2>
-          <button className="reset-btn" onClick={resetQuiz}>Try Again</button>
+    <div className="quiz-page-layout">
+      <div className="quiz-header">
+        <span className="logo">Heritage India</span>
+        <div className={`timer ${timeLeft < 10 ? 'urgent' : ''}`}>
+          Time: {timeLeft}s
         </div>
-      ) : (
-        <div className="question-section">
-          <div className="question-count">
-            <span>Question {currentQuestion + 1}</span>/{quizQuestions.length}
+      </div>
+
+      <div className="quiz-container-centered">
+        {questions.map((q, index) => (
+          <div key={q.id} className="q-card">
+            <h3>{index + 1}. {q.question}</h3>
+            <div className="options-grid">
+              {q.options.map(opt => (
+                <label key={opt} className={`opt-box ${answers[q.id] === opt ? 'selected' : ''}`}>
+                  <input type="radio" name={`q${q.id}`} value={opt} onChange={() => setAnswers({...answers, [q.id]: opt})} />
+                  {opt}
+                </label>
+              ))}
+            </div>
           </div>
-          <div className="question-text">
-            {quizQuestions[currentQuestion].question}
-          </div>
-          <div className="answer-options">
-            {quizQuestions[currentQuestion].options.map((option, index) => (
-              <button 
-                key={index} 
-                className="option-btn"
-                onClick={() => handleAnswerClick(index)}
-              >
-                {option}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+        ))}
+        <button onClick={handleSubmit} className="submit-pop-button">FINISH & SUBMIT</button>
+      </div>
     </div>
   );
-};
-
-export default Quiz;
+}

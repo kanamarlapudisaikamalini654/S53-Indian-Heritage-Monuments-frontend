@@ -1,0 +1,69 @@
+/* 1. CORE LAYOUT */
+.admin-dashboard {
+  padding: 40px;
+  background-color: #f9f6f2; /* Heritage paper color */
+  min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* 2. THEMED RESULTS TABLE */
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  box-shadow: 0 8px 25px rgba(139, 69, 19, 0.1); /* Subtle brown shadow */
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.results-table th {
+  background-color: #8b4513; /* Heritage Brown */
+  color: white;
+  padding: 18px;
+  text-align: left;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.results-table td {
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+  color: #333;
+}
+
+/* 3. ROW HOVER EFFECT */
+.results-table tbody tr:hover {
+  background-color: #fffaf5; /* Very light brown highlight */
+  transform: scale(1.002);
+  transition: 0.2s;
+}
+
+/* 4. STATUS BADGES */
+.badge {
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 900;
+  display: inline-block;
+  text-align: center;
+  min-width: 80px;
+}
+
+.badge.pass { 
+  background: #d4edda; 
+  color: #155724; 
+  border: 1px solid #c3e6cb;
+}
+
+.badge.fail { 
+  background: #f8d7da; 
+  color: #721c24; 
+  border: 1px solid #f5c6cb;
+}
+
+/* 5. RESPONSIVE DESIGN */
+@media (max-width: 768px) {
+  .admin-dashboard { padding: 20px; }
+  .results-table { display: block; overflow-x: auto; }
+}

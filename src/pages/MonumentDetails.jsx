@@ -1,99 +1,140 @@
-import { useParams, Link } from 'react-router-dom';
-import { monuments } from '../data/mockData.js';
-import { useAuth } from '../context/AuthContext.jsx';
-import '../styles/Monuments.css';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import "../styles/pages.css";
 
 export default function MonumentDetails() {
   const { id } = useParams();
-  const monument = monuments.find((m) => m.id === parseInt(id));
-  const { user, toggleFavorite, isFavorite } = useAuth();
+  const navigate = useNavigate();
+  const [monument, setMonument] = useState(null);
+  
+  // --- New State for Discussions ---
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (!monument) {
-    return (
-      <div className="monument-details" style={{ textAlign: 'center', padding: '160px 20px 80px' }}>
-        <h2>Monument Not Found</h2>
-        <p style={{ color: 'var(--gray)', margin: '16px 0 24px' }}>
-          The monument you are looking for does not exist.
-        </p>
-        <Link to="/monuments" className="btn btn-primary">Browse Monuments</Link>
-      </div>
-    );
-  }
+  useEffect(() => {
+    // Fetch Monument Data
+    axios.get(`http://localhost:8081/api/monuments/${id}`)
+      .then(res => setMonument(res.data))
+      .catch(err => console.error("Error fetching monument:", err));
+
+    // Fetch Existing Comments (Assuming your endpoint is /api/comments/monument/{id})
+    axios.get(`http://localhost:8081/api/comments/monument/${id}`)
+      .then(res => setComments(res.data))
+      .catch(err => console.warn("Comments endpoint not ready or empty."));
+  }, [id]);
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    if (!newComment.trim()) return;
+
+    setIsSubmitting(true);
+    try {
+      const response = await axios.post("http://localhost:8081/api/comments", {
+        monumentId: id,
+        username: "Cultural_Enthusiast", // Placeholder for logged-in user
+        text: newComment,
+        timestamp: new Date().toISOString()
+      });
+      
+      setComments([response.data, ...comments]); // Add new comment to top of list
+      setNewComment("");
+    } catch (err) {
+      console.error("Failed to post comment:", err);
+      alert("Could not post comment. Ensure backend is running.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (!monument) return <div className="loader">Opening the Archives...</div>;
 
   return (
-    <div className="monument-details">
-      {/* Hero Image */}
-      <div className="monument-detail-hero">
-        <img src={monument.image} alt={monument.name} crossOrigin="anonymous" />
-        <div className="monument-detail-hero-overlay">
+    <div className="details-wrapper">
+      {/* Hero Section */}
+      <div className="details-hero" style={{ backgroundImage: `url(${monument.image_url})` }}>
+        <div className="hero-overlay">
           <h1>{monument.name}</h1>
-          <p>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ display: 'inline', verticalAlign: 'middle', marginRight: '6px' }}>
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-              <circle cx="12" cy="10" r="3"/>
-            </svg>
-            {monument.location} | {monument.year}
-          </p>
+          <p>{monument.location} | {monument.era} Architecture</p>
+          
+          <button className="jump-tour-btn" onClick={() => navigate('/virtual-tour')}>
+            🎥 Launch 360° Tour
+          </button>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="monument-detail-content">
-        {/* Tags */}
-        <div className="detail-tags" style={{ marginBottom: '36px' }}>
-          <span className="tag-region">{monument.region}</span>
-          <span className="tag-era">{monument.era}</span>
-          <span style={{ background: 'rgba(212, 175, 55, 0.12)', color: 'var(--gold)' }}>{monument.type}</span>
-        </div>
-
-        {/* Description */}
-        <div className="detail-section">
-          <h2>About</h2>
-          <div className="decorative-bar" style={{ margin: '12px 0 20px' }}></div>
+      <div className="details-container">
+        {/* About Section */}
+        <section className="info-section">
+          <h2>About the Monument</h2>
           <p>{monument.description}</p>
-        </div>
+        </section>
 
-        {/* History */}
-        <div className="detail-section">
-          <h2>History</h2>
-          <div className="decorative-bar" style={{ margin: '12px 0 20px' }}></div>
-          <p>{monument.history}</p>
-        </div>
-
-        {/* Key Facts */}
-        <div className="detail-section">
-          <h2>Key Facts</h2>
-          <div className="decorative-bar" style={{ margin: '12px 0 20px' }}></div>
-          <ul className="facts-list">
-            {monument.facts.map((fact, i) => (
-              <li key={i}>{fact}</li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Gallery */}
-        <div className="detail-section">
-          <h2>Gallery</h2>
-          <div className="decorative-bar" style={{ margin: '12px 0 20px' }}></div>
-          <div className="detail-gallery">
-            {monument.gallery.map((img, i) => (
-              <img key={i} src={img} alt={`${monument.name} view ${i + 1}`} crossOrigin="anonymous" />
-            ))}
+        {/* Tour Guide Insights */}
+        <section className="guide-insights">
+          <div className="guide-header">
+            <span>🕵️ Tour Guide's Perspective</span>
           </div>
-        </div>
+          <div className="guide-content">
+            <p>
+              <strong>Did you know?</strong> This monument was built using {monument.type} techniques 
+              and reflects the peak of the {monument.era} era. While on the virtual tour, 
+              look closely at the {monument.short_desc} to see the intricate craftsmanship.
+            </p>
+          </div>
+        </section>
 
-        {/* Actions */}
-        <div className="detail-actions">
-          {user && (
-            <button
-              className={`btn ${isFavorite(monument.id) ? 'btn-danger' : 'btn-primary'}`}
-              onClick={() => toggleFavorite(monument.id)}
+        {/* Quick Facts */}
+        <section className="quick-facts">
+          <h3>Quick Information</h3>
+          <ul>
+            <li><strong>Built Around:</strong> {monument.year}</li>
+            <li><strong>Historical Era:</strong> {monument.era}</li>
+            <li><strong>Region:</strong> {monument.region}</li>
+          </ul>
+        </section>
+
+        <hr className="section-divider" />
+
+        {/* NEW: Cultural Discussion (Enthusiast Role) */}
+        <section className="discussion-board">
+          <h3>🏛️ Cultural Discussion</h3>
+          <p className="discussion-subtitle">Join other enthusiasts in sharing insights about {monument.name}.</p>
+          
+          <div className="comment-input-area">
+            <textarea 
+              placeholder="Share your thoughts or ask a question about this monument..." 
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+            ></textarea>
+            <button 
+              className="vt-btn" 
+              onClick={handleCommentSubmit}
+              disabled={isSubmitting}
             >
-              {isFavorite(monument.id) ? 'Remove from Favorites' : 'Add to Favorites'}
+              {isSubmitting ? "Posting..." : "Post Insight"}
             </button>
-          )}
-          <Link to="/monuments" className="btn btn-outline">Back to Monuments</Link>
-        </div>
+          </div>
+
+          <div className="comments-list">
+            {comments.length > 0 ? (
+              comments.map((comment) => (
+                <div key={comment.id} className="comment-item">
+                  <div className="comment-meta">
+                    <strong>@{comment.username}</strong>
+                    <span className="comment-date">
+                      {new Date(comment.timestamp).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <p className="comment-text">{comment.text}</p>
+                </div>
+              ))
+            ) : (
+              <p className="no-comments">No discussions yet. Be the first to start the conversation!</p>
+            )}
+          </div>
+        </section>
       </div>
     </div>
   );

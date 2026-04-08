@@ -38,6 +38,7 @@ export default function Navbar() {
           <Link to="/virtual-tour" className={isActive('/virtual-tour')}>Virtual Tour</Link>
           <Link to="/blog" className={isActive('/blog')}>Blog</Link>
           <Link to="/quiz" className={isActive('/quiz')}>Quiz</Link>
+          {/* Dashboard link appears only when logged in */}
           {user && <Link to="/dashboard" className={isActive('/dashboard')}>Dashboard</Link>}
           <Link to="/about" className={isActive('/about')}>About</Link>
         </div>
@@ -45,11 +46,26 @@ export default function Navbar() {
         <div className="navbar-auth">
           {user ? (
             <div className="user-profile">
-              <span className="username">{user.username}</span>
+              <span className="username" style={{ marginRight: '15px', fontWeight: 'bold', color: 'var(--saffron)' }}>
+                {user.username}
+              </span>
               <button className="logout-btn" onClick={handleLogout}>Logout</button>
             </div>
           ) : (
-            <Link to="/login" className="login-btn">Login</Link>
+            <div className="auth-buttons" style={{ display: 'flex', gap: '10px' }}>
+              <Link to="/login" className="login-btn">Login</Link>
+              {/* Added Signup Button */}
+              <Link to="/signup" className="signup-btn" style={{ 
+                padding: '8px 16px', 
+                backgroundColor: 'var(--saffron, #f39c12)', 
+                color: 'white', 
+                borderRadius: '5px',
+                textDecoration: 'none',
+                fontWeight: '600'
+              }}>
+                Sign Up
+              </Link>
+            </div>
           )}
         </div>
 

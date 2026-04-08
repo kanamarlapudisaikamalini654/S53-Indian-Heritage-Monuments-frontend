@@ -1,94 +1,140 @@
-import { teamMembers } from '../data/mockData.js';
+import React, { useState } from 'react';
+import axios from 'axios';
 import '../styles/About.css';
 
-export default function About() {
+const About = () => {
+  const [status, setStatus] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: ""
+  });
+
+  // Roles updated to match the "Cultural Heritage" project theme
+  const team = [
+    { 
+      name: 'K. Sai Kamalini', 
+      role: 'Project Admin & Lead Architect', 
+      id: '2400032031',
+      details: 'Managing system security, role-based access, and full-stack integration.'
+    },
+    { 
+      name: 'A. Divya Sri', 
+      role: 'Cultural Enthusiast & UI Designer', 
+      id: 'Team Member',
+      details: 'Designing aesthetic interfaces and researching historical monument data.'
+    },
+    { 
+      name: 'Zafeer', 
+      role: 'Content Curator & Backend Specialist', 
+      id: 'Team Member',
+      details: 'Organizing digital heritage content and managing API mail services.'
+    }
+  ];
+
+  const handleContact = async (e) => {
+    e.preventDefault();
+    setStatus("Sending message...");
+
+    try {
+      // Connects to your MailController @PostMapping("/send-query")
+      const response = await axios.post("http://localhost:8081/api/mail/send-query", formData);
+      
+      // Checking for 200 OK status to trigger the "Thank You" message
+      if (response.status === 200) {
+        setStatus("Success! Your message has reached the Heritage Team.");
+        setFormData({ name: "", email: "", message: "" }); // Resets form fields
+      }
+    } catch (error) {
+      console.error("Connection Error:", error);
+      setStatus("Error: Could not connect to the mail server.");
+    }
+  };
+
   return (
-    <div>
-      {/* Hero */}
+    <div className="about-page">
+      {/* Hero Section */}
       <section className="about-hero">
-        <div>
-          <h1>About Heritage India</h1>
+        <div className="container">
+          <h1>Preserving Indian Heritage</h1>
           <div className="decorative-bar"></div>
-          <p>
-            Preserving the cultural legacy of India and inspiring the next generation
-            to connect with our glorious heritage.
-          </p>
+          <p>Our mission is to digitize and celebrate India's architectural legacy.</p>
         </div>
       </section>
 
-      {/* Mission */}
-      <section className="mission-section">
-        <h2>Our Mission</h2>
-        <div className="decorative-bar" style={{ margin: '12px 0 24px' }}></div>
-        <p>
-          Heritage India was born from a passion for preserving and promoting the incredible
-          cultural legacy of India. Our mission is to make India's rich heritage accessible to
-          everyone through technology, storytelling, and immersive experiences.
-        </p>
-        <p>
-          We believe that understanding our past is essential to building a meaningful future.
-          Through virtual tours, detailed monument guides, cultural articles, and interactive
-          quizzes, we aim to inspire a deep appreciation for India's timeless contributions to
-          art, architecture, science, and philosophy.
-        </p>
-
-        <div className="mission-values">
-          <div className="value-card">
-            <div className="value-icon" style={{ background: 'rgba(255, 153, 51, 0.15)', color: 'var(--saffron)' }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                <polyline points="9 22 9 12 15 12 15 22"/>
-              </svg>
-            </div>
-            <h3>Preservation</h3>
-            <p>Documenting and digitizing India's cultural heritage for future generations to discover and cherish.</p>
-          </div>
-          <div className="value-card">
-            <div className="value-icon" style={{ background: 'rgba(19, 136, 8, 0.15)', color: 'var(--green)' }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-              </svg>
-            </div>
-            <h3>Education</h3>
-            <p>Making learning about heritage engaging and interactive through modern technology and storytelling.</p>
-          </div>
-          <div className="value-card">
-            <div className="value-icon" style={{ background: 'rgba(212, 175, 55, 0.15)', color: 'var(--gold)' }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="2" y1="12" x2="22" y2="12"/>
-                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-              </svg>
-            </div>
-            <h3>Community</h3>
-            <p>Building a global community of heritage enthusiasts who share a passion for India's cultural richness.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Team */}
+      {/* Team Section */}
       <section className="team-section">
-        <h2 className="section-title">Our Team</h2>
-        <div className="decorative-bar"></div>
-        <p className="section-subtitle">
-          A passionate team dedicated to bringing India's heritage to the digital world.
-        </p>
-        <div className="team-grid">
-          {teamMembers.map((member, i) => (
-            <div className="team-card" key={i}>
-              <img
-                src={member.avatar}
-                alt={member.name}
-                className="team-avatar"
-                crossOrigin="anonymous"
-              />
-              <h4>{member.name}</h4>
-              <p>{member.role}</p>
-            </div>
-          ))}
+        <div className="container">
+          <h2 className="section-title">The Visionaries</h2>
+          <div className="team-grid">
+            {team.map((member, index) => (
+              <div key={index} className="team-card">
+                <div className="team-avatar-placeholder">
+                  {member.name.charAt(0)}
+                </div>
+                <h3>{member.name}</h3>
+                <p className="member-role">{member.role}</p>
+                <p className="member-details" style={{fontSize: '0.85rem', color: '#636e72', margin: '10px 0'}}>{member.details}</p>
+                <small className="member-id">{member.id}</small>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section className="contact-section">
+        <div className="container">
+          <h2 className="section-title">Contact Us</h2>
+          <p className="contact-subtext">Have questions about monuments? Reach out to the team!</p>
+          
+          <div className="contact-card">
+            <form className="contact-form" onSubmit={handleContact}>
+              <div className="form-group">
+                <input 
+                  type="text" 
+                  placeholder="Full Name" 
+                  value={formData.name}
+                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  required 
+                />
+              </div>
+              <div className="form-group">
+                <input 
+                  type="email" 
+                  placeholder="Email Address" 
+                  value={formData.email}
+                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  required 
+                />
+              </div>
+              <div className="form-group">
+                <textarea 
+                  placeholder="Your Message" 
+                  rows="5" 
+                  value={formData.message}
+                  onChange={(e) => setFormData({...formData, message: e.target.value})}
+                  required
+                ></textarea>
+              </div>
+              <button type="submit" className="submit-btn">Send Message</button>
+            </form>
+
+            {status && (
+              <p className={`status-message ${status.includes("Success") ? "success" : "error"}`} 
+                 style={{
+                   marginTop: '20px', 
+                   color: status.includes("Success") ? '#138808' : '#d63031',
+                   fontWeight: 'bold'
+                 }}>
+                {status}
+              </p>
+            )}
+          </div>
         </div>
       </section>
     </div>
   );
-}
+};
+
+export default About;

@@ -9,7 +9,7 @@ export default function Home() {
     <div>
       {/* Hero Section */}
       <section className="home-hero">
-        <div className="hero-content">
+        <div  className="hero-content">
           <h1>
             Discover the <span>Soul of India</span>
           </h1>
