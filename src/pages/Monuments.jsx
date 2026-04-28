@@ -18,20 +18,18 @@ export default function Monuments() {
   };
 
   useEffect(() => {
-    // 2. Fetch the text data from your Spring Boot API
-    axios.get("http://localhost:8081/api/monuments")
-      .then(response => {
-        // Filter to show only IDs 2, 3, and 5
-        const validIds = [2, 3, 5];
-        const filtered = response.data.filter(m => validIds.includes(m.id));
-        setDbMonuments(filtered);
-        setLoading(false);
-      })
-      .catch(error => {
-        console.error("Connection error:", error);
-        setLoading(false);
-      });
-  }, []);
+  axios.get(`${BASE_URL}/api/monuments`)
+    .then(response => {
+      const validIds = [2, 3, 5];
+      const filtered = response.data.filter(m => validIds.includes(m.id));
+      setDbMonuments(filtered);
+      setLoading(false);
+    })
+    .catch(error => {
+      console.error("Connection error:", error);
+      setLoading(false);
+    });
+}, []);
 
   if (loading) return <div className="loader">Refreshing Heritage Data...</div>;
 

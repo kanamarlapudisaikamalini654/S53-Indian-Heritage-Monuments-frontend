@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import BASE_URL from '../api';
 import '../styles/About.css';
 
 const About = () => {
@@ -10,7 +11,6 @@ const About = () => {
     message: ""
   });
 
-  // Roles updated to match the "Cultural Heritage" project theme
   const team = [
     { 
       name: 'K. Sai Kamalini', 
@@ -37,13 +37,14 @@ const About = () => {
     setStatus("Sending message...");
 
     try {
-      // Connects to your MailController @PostMapping("/send-query")
-      const response = await axios.post("http://localhost:8081/api/mail/send-query", formData);
-      
-      // Checking for 200 OK status to trigger the "Thank You" message
+      const response = await axios.post(
+        `${BASE_URL}/api/mail/send-query`,
+        formData
+      );
+
       if (response.status === 200) {
         setStatus("Success! Your message has reached the Heritage Team.");
-        setFormData({ name: "", email: "", message: "" }); // Resets form fields
+        setFormData({ name: "", email: "", message: "" });
       }
     } catch (error) {
       console.error("Connection Error:", error);
@@ -53,6 +54,7 @@ const About = () => {
 
   return (
     <div className="about-page">
+
       {/* Hero Section */}
       <section className="about-hero">
         <div className="container">
@@ -74,7 +76,9 @@ const About = () => {
                 </div>
                 <h3>{member.name}</h3>
                 <p className="member-role">{member.role}</p>
-                <p className="member-details" style={{fontSize: '0.85rem', color: '#636e72', margin: '10px 0'}}>{member.details}</p>
+                <p className="member-details" style={{fontSize: '0.85rem', color: '#636e72', margin: '10px 0'}}>
+                  {member.details}
+                </p>
                 <small className="member-id">{member.id}</small>
               </div>
             ))}
@@ -87,9 +91,10 @@ const About = () => {
         <div className="container">
           <h2 className="section-title">Contact Us</h2>
           <p className="contact-subtext">Have questions about monuments? Reach out to the team!</p>
-          
+
           <div className="contact-card">
             <form className="contact-form" onSubmit={handleContact}>
+              
               <div className="form-group">
                 <input 
                   type="text" 
@@ -99,6 +104,7 @@ const About = () => {
                   required 
                 />
               </div>
+
               <div className="form-group">
                 <input 
                   type="email" 
@@ -108,6 +114,7 @@ const About = () => {
                   required 
                 />
               </div>
+
               <div className="form-group">
                 <textarea 
                   placeholder="Your Message" 
@@ -117,22 +124,27 @@ const About = () => {
                   required
                 ></textarea>
               </div>
+
               <button type="submit" className="submit-btn">Send Message</button>
             </form>
 
             {status && (
-              <p className={`status-message ${status.includes("Success") ? "success" : "error"}`} 
-                 style={{
-                   marginTop: '20px', 
-                   color: status.includes("Success") ? '#138808' : '#d63031',
-                   fontWeight: 'bold'
-                 }}>
+              <p 
+                className={`status-message ${status.includes("Success") ? "success" : "error"}`} 
+                style={{
+                  marginTop: '20px',
+                  color: status.includes("Success") ? '#138808' : '#d63031',
+                  fontWeight: 'bold'
+                }}
+              >
                 {status}
               </p>
             )}
+
           </div>
         </div>
       </section>
+
     </div>
   );
 };

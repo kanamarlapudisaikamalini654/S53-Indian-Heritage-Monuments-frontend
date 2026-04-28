@@ -8,12 +8,13 @@ const Blog = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Using your working port (likely 8081)
-    axios.get('http://localhost:8081/api/monuments')
-      .then(res => setBlogs(res.data))
-      .catch(err => console.error("Fetch Error:", err));
-  }, []);
-
+  axios.get('https://s53-indian-heritage-monument-backend-3.onrender.com/api/monuments')
+    .then(res => setBlogs(res.data))
+    .catch(err => {
+      console.error("Fetch Error:", err);
+      setBlogs([]); // prevents blank UI crash
+    });
+}, []);
   return (
     <div className="blog-page-wrapper">
       <div className="blog-header-section">

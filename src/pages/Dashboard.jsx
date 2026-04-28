@@ -9,28 +9,33 @@ export default function Dashboard() {
   const [monuments, setMonuments] = useState([]);
   const navigate = useNavigate();
 
-  // 1. DYNAMIC NAME LOGIC: Priority: State > LocalStorage > Default
+  // Dynamic user info
   const displayName = user?.name || localStorage.getItem("userName") || "Kamalini";
   const displayEmail = user?.email || localStorage.getItem("userEmail") || "";
   const displayRole = user?.role || localStorage.getItem("userRole") || "Student";
 
-  // 2. ADMIN DETECTION
+  // Admin check
   const isAdmin = displayEmail === 'kamalini@gmail.com' || displayRole === 'ADMIN';
 
   useEffect(() => {
-    // Only fetch favorite details if the user is a Student (to show their favorites list)
     if (user && !isAdmin) {
-      axios.get("http://localhost:8081/api/monuments")
+      axios.get("https://s53-indian-heritage-monument-backend-3.onrender.com/api/monuments")
         .then(res => {
           const uniqueMap = new Map();
+
           res.data.forEach(item => {
             if (item.name) uniqueMap.set(item.name, item);
           });
+
           const uniqueData = Array.from(uniqueMap.values());
           const favData = uniqueData.filter(m => favorites.includes(m.id));
+
           setMonuments(favData);
         })
-        .catch(err => console.error("API Error:", err));
+        .catch(err => {
+          console.error("API Error:", err);
+          setMonuments([]); // ✅ safe fallback
+        });
     }
   }, [favorites, user, isAdmin]);
 
@@ -39,40 +44,38 @@ export default function Dashboard() {
       <div className="dashboard-login-required">
         <h2>Access Denied</h2>
         <p>Please login to view your personal dashboard.</p>
-        <button onClick={() => navigate('/login')} className="login-btn">Login Now</button>
+        <button onClick={() => navigate('/login')} className="login-btn">
+          Login Now
+        </button>
       </div>
     );
   }
 
   return (
     <div className="dashboard-page">
+
+      {/* HERO SECTION */}
       <section className="dashboard-hero">
         <h1>{isAdmin ? "Admin Dashboard" : "User Dashboard"}</h1>
-        {/* FIX: Using the dynamic displayName variable */}
         <p className="user-greeting">Welcome back, {displayName}</p>
-        
+
         <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '10px' }}>
-          <span className="role-badge" style={{ backgroundColor: '#ff9933', color: '#fff', padding: '5px 15px', borderRadius: '20px' }}>
+          <span className="role-badge">
             {displayRole}
           </span>
 
           {isAdmin && (
-            <Link to="/admin" className="admin-btn" style={{ 
-              backgroundColor: '#e67e22', 
-              color: 'white', 
-              padding: '5px 15px', 
-              borderRadius: '20px', 
-              textDecoration: 'none',
-              fontWeight: 'bold' 
-            }}>
+            <Link to="/admin" className="admin-btn">
               VIEW QUIZ RESULTS
             </Link>
           )}
         </div>
       </section>
 
+      {/* CONTENT */}
       <div className="dashboard-content">
-        {/* STATS SECTION */}
+
+        {/* STATS */}
         <div className="dash-stats">
           {isAdmin ? (
             <>
@@ -99,21 +102,21 @@ export default function Dashboard() {
           )}
         </div>
 
-        {/* MAIN CONTENT SECTION */}
+        {/* MAIN SECTION */}
         <section className="dash-section">
+
           {isAdmin ? (
-            <div className="admin-welcome-box" style={{ 
-              textAlign: 'center', 
-              padding: '40px', 
-              background: '#fff', 
-              borderRadius: '10px', 
-              boxShadow: '0 4px 10px rgba(0,0,0,0.05)' 
-            }}>
+            <div className="admin-welcome-box">
               <h3>Administrative Overview</h3>
-              <p>Hello Admin! You have full access to manage the Heritage India portal.</p>
-              <p>Click the <b>"View Quiz Results"</b> button above to see student performance.</p>
-              <img src="https://img.icons8.com/color/96/admin-settings-male.png" alt="admin-icon" style={{ marginTop: '20px' }} />
+              <p>Hello Admin! You have full access to manage the portal.</p>
+              <p>Click “View Quiz Results” to see student data.</p>
+
+              <img
+                src="https://img.icons8.com/color/96/admin-settings-male.png"
+                alt="admin"
+              />
             </div>
+
           ) : (
             <>
               <div className="dash-section-header">
@@ -124,29 +127,44 @@ export default function Dashboard() {
                 <div className="fav-grid">
                   {monuments.map(m => (
                     <div key={m.id} className="fav-card">
+
                       <div className="fav-card-image-wrapper">
-                        <img 
-                          src={m.image_url || m.imageUrl || m.imageURL} 
-                          alt={m.name} 
-                          onError={(e) => { e.target.src = `https://images.unsplash.com/photo-1548013146-72479768bbaa?q=80&w=400`; }} 
+                        <img
+                          src={m.image_url || m.imageUrl}
+                          alt={m.name}
+                          onError={(e) => {
+                            e.target.src =
+                              "https://images.unsplash.com/photo-1548013146-72479768bbaa?q=80&w=400";
+                          }}
                         />
                       </div>
+
                       <div className="fav-card-body">
                         <h4>{m.name}</h4>
                         <p>{m.location}</p>
-                        <button className="remove-btn" onClick={() => toggleFavorite(m.id)}>Remove</button>
+                        <button
+                          className="remove-btn"
+                          onClick={() => toggleFavorite(m.id)}
+                        >
+                          Remove
+                        </button>
                       </div>
+
                     </div>
                   ))}
                 </div>
               ) : (
                 <div className="empty-state">
                   <h3>No Favorites Yet</h3>
-                  <Link to="/monuments" className="explore-link">Explore Monuments</Link>
+                  <Link to="/monuments" className="explore-link">
+                    Explore Monuments
+                  </Link>
                 </div>
               )}
+
             </>
           )}
+
         </section>
       </div>
     </div>

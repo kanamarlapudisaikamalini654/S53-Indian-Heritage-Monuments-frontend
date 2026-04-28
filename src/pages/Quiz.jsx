@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../styles/Quiz.css'; 
+import BASE_URL from "../api";
+import '../styles/Quiz.css';
 
 export default function Quiz() {
   const navigate = useNavigate();
   const [answers, setAnswers] = useState({});
-  const [timeLeft, setTimeLeft] = useState(60); 
+  const [timeLeft, setTimeLeft] = useState(60);
   const [isFinished, setIsFinished] = useState(false);
   const [score, setScore] = useState(0);
 
@@ -23,26 +24,30 @@ export default function Quiz() {
       const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
       return () => clearTimeout(timer);
     } else if (timeLeft === 0 && !isFinished) {
-      handleSubmit(); 
+      handleSubmit();
     }
   }, [timeLeft, isFinished]);
 
   const handleSubmit = async () => {
     let finalScore = 0;
+
     questions.forEach(q => {
       if (answers[q.id] === q.answer) finalScore += 1;
     });
+
     setScore(finalScore);
 
     try {
-      await axios.post("http://localhost:8081/api/quiz/submit", {
-        studentName: localStorage.getItem("userName") || "Kamalini",
+      await axios.post(`${BASE_URL}/api/quiz/submit`, {
+        studentName: localStorage.getItem("userName") || "Student",
         score: finalScore,
-        totalQuestions: 5
+        totalQuestions: questions.length
       });
+
       setIsFinished(true);
     } catch (error) {
-      setIsFinished(true); 
+      console.error("Quiz submit error:", error);
+      setIsFinished(true);
     }
   };
 
@@ -51,9 +56,16 @@ export default function Quiz() {
       <div className="quiz-result-screen">
         <div className="result-card-bold">
           <h1>Quiz Completed!</h1>
-          <div className="score-circle-bold">{score} / 5</div>
-          <p>Great Job, {localStorage.getItem("userName") || "Kamalini"}!</p>
-          <button onClick={() => navigate('/dashboard')} className="btn-dash">Back to Dashboard</button>
+
+          <div className="score-circle-bold">
+            {score} / {questions.length}
+          </div>
+
+          <p>Great Job, {localStorage.getItem("userName") || "Student"}!</p>
+
+          <button onClick={() => navigate('/dashboard')} className="btn-dash">
+            Back to Dashboard
+          </button>
         </div>
       </div>
     );
@@ -72,17 +84,31 @@ export default function Quiz() {
         {questions.map((q, index) => (
           <div key={q.id} className="q-card">
             <h3>{index + 1}. {q.question}</h3>
+
             <div className="options-grid">
               {q.options.map(opt => (
-                <label key={opt} className={`opt-box ${answers[q.id] === opt ? 'selected' : ''}`}>
-                  <input type="radio" name={`q${q.id}`} value={opt} onChange={() => setAnswers({...answers, [q.id]: opt})} />
+                <label
+                  key={opt}
+                  className={`opt-box ${answers[q.id] === opt ? 'selected' : ''}`}
+                >
+                  <input
+                    type="radio"
+                    name={`q${q.id}`}
+                    value={opt}
+                    onChange={() =>
+                      setAnswers({ ...answers, [q.id]: opt })
+                    }
+                  />
                   {opt}
                 </label>
               ))}
             </div>
           </div>
         ))}
-        <button onClick={handleSubmit} className="submit-pop-button">FINISH & SUBMIT</button>
+
+        <button onClick={handleSubmit} className="submit-pop-button">
+          FINISH & SUBMIT
+        </button>
       </div>
     </div>
   );
